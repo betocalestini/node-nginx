@@ -1,0 +1,66 @@
+version: '3'
+
+services:
+   nginx:
+      image: nginx:1.21.5
+      container_name: nginx
+      ports:
+         - '80:80'
+         - '443:443'
+      volumes:
+         - ../public:/usr/share/nginx/html
+         - ../nginx:/etc/nginx
+         - ../cert:/cert
+      networks:
+         - rede1
+
+   db:
+      image: mysql:8.0.27
+      container_name: mysql
+      restart: always
+      volumes:
+         - /home/betocalestini/mysqldb:/var/lib/mysql
+      environment:
+         - MYSQL_ROOT_PASSWORD=admin
+         - TZ=America/Sao_Paulo
+      ports:
+         - 3307:3306
+      networks:
+         - rede1
+   app1:
+      build: .
+      container_name: app1
+      command: npm start
+      ports:
+         - '81:3000'
+      volumes:
+         - .:/usr/app
+      networks:
+         - rede1
+
+   app2:
+      build: .
+      container_name: app2
+      command: npm start
+      ports:
+         - '82:3000'
+      volumes:
+         - .:/usr/app
+      networks:
+         - rede1
+
+   app3:
+      build: .
+      container_name: app3
+      command: npm start
+      ports:
+         - '83:3000'
+      volumes:
+         - .:/usr/app
+      networks:
+         - rede1
+
+networks:
+   rede1:
+      name: rede1
+      driver: bridge
